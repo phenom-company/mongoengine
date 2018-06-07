@@ -1388,6 +1388,16 @@ class BaseQuerySet(object):
         queryset._where_clause = where_clause
         return queryset
 
+    def cast_to_type(function):
+        def wrapper(self, *args, **kwargs):
+            value = function(self, *args, **kwargs)
+            field_parts = args[0].split('.')
+            field_instances = self._document._lookup_field(field_parts)
+            return field_instances[0].to_python(value)
+
+        return wrapper
+
+    @cast_to_type
     def sum(self, field):
         """Sum over the values of the specified field.
 
@@ -1418,6 +1428,7 @@ class BaseQuerySet(object):
             return result[0]['total']
         return 0
 
+    @cast_to_type
     def average(self, field):
         """Average over the values of the specified field.
 

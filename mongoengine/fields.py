@@ -8,7 +8,7 @@ import uuid
 import warnings
 from operator import itemgetter
 
-from bson import Binary, DBRef, ObjectId, SON
+from bson import Binary, DBRef, ObjectId, SON, Decimal128
 import gridfs
 import pymongo
 import six
@@ -415,7 +415,7 @@ class DecimalField(BaseField):
             return value
         if self.force_string:
             return six.text_type(self.to_python(value))
-        return float(self.to_python(value))
+        return Decimal128(self.to_python(value))
 
     def validate(self, value):
         if not isinstance(value, decimal.Decimal):
